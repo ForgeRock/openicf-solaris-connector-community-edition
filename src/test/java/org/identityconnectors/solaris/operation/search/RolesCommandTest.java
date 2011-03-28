@@ -23,20 +23,19 @@
 
 package org.identityconnectors.solaris.operation.search;
 
-import junit.framework.Assert;
-
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.solaris.attr.NativeAttribute;
 import org.identityconnectors.solaris.test.SolarisTestBase;
-import org.junit.Test;
 
 public class RolesCommandTest extends SolarisTestBase {
     @Test
     public void test() {
         Attribute result = RolesCommand.getRolesAttributeFor("root", getConnection());
-        Assert.assertNotNull(result);
-        Assert.assertTrue(result.getValue().size() == 0);
-        Assert.assertEquals(NativeAttribute.ROLES.getName(), result.getName());
+        AssertJUnit.assertNotNull(result);
+        AssertJUnit.assertTrue(result.getValue().size() == 0);
+        AssertJUnit.assertEquals(NativeAttribute.ROLES.getName(), result.getName());
     }
     
     @Override

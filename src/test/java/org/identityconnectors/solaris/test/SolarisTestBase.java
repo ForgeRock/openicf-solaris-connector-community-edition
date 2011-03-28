@@ -22,6 +22,8 @@
  */
 package org.identityconnectors.solaris.test;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,8 +38,6 @@ import org.identityconnectors.framework.common.objects.Uid;
 import org.identityconnectors.solaris.SolarisConfiguration;
 import org.identityconnectors.solaris.SolarisConnection;
 import org.identityconnectors.solaris.attr.GroupAttribute;
-import org.junit.After;
-import org.junit.Before;
 
 public abstract class SolarisTestBase {
     /** this password is used to initialize all the test users */
@@ -56,8 +56,8 @@ public abstract class SolarisTestBase {
         }
     }
 
-    @Before
-    public void beforeTestMethods() {
+    @BeforeMethod
+	public void beforeTestMethods() {
         connection = SolarisTestCommon.getSolarisConn();
         configuration = connection.getConfiguration();
         facade = SolarisTestCommon.createConnectorFacade(getConfiguration());
@@ -68,8 +68,8 @@ public abstract class SolarisTestBase {
         generateGroup(CollectionUtil.newList("root"));
     }
 
-    @After
-    public void afterTestMethods() {
+    @AfterMethod
+	public void afterTestMethods() {
         cleanUpUsers();
         cleanupGroup();
         try {

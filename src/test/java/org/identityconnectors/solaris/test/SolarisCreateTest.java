@@ -22,10 +22,10 @@
  */
 package org.identityconnectors.solaris.test;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.HashSet;
 import java.util.Set;
-
-import junit.framework.Assert;
 
 import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.common.security.GuardedString;
@@ -37,7 +37,6 @@ import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.OperationalAttributes;
 import org.identityconnectors.framework.common.objects.Uid;
 import org.identityconnectors.solaris.attr.GroupAttribute;
-import org.junit.Test;
 
 public class SolarisCreateTest extends SolarisTestBase {
     /**
@@ -55,14 +54,14 @@ public class SolarisCreateTest extends SolarisTestBase {
             try {
                 uid = getFacade().create(ObjectClass.ACCOUNT, attrs, null);
             } catch (RuntimeException ex) {
-                Assert.fail(String.format("Create failed for: '%s'\n ExceptionMessage: %s", username, ex.getMessage()));
+                AssertJUnit.fail(String.format("Create failed for: '%s'\n ExceptionMessage: %s", username, ex.getMessage()));
             }
-            Assert.assertNotNull(uid);
+            AssertJUnit.assertNotNull(uid);
 
             // search for the created account
             String command = (!getConnection().isNis()) ? "cut -d: -f1 /etc/passwd | grep '" + username + "'" : "ypcat passwd | cut -d: -f1 | grep '" + username + "'";
             String out = getConnection().executeCommand(command);
-            Assert.assertTrue(String.format("user '%s' not found on the resource.", username), out.contains(username));
+            AssertJUnit.assertTrue(String.format("user '%s' not found on the resource.", username), out.contains(username));
             
         } finally {
             // cleanup the new user
@@ -79,13 +78,13 @@ public class SolarisCreateTest extends SolarisTestBase {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void unknownObjectClass() {
         final Set<Attribute> attrs = CollectionUtil.newSet(AttributeBuilder.build(Name.NAME, "foo"));
         getFacade().create(new ObjectClass("NONEXISTING_OBJECTCLASS"), attrs, null);
     }
 
-    @Test(expected = ConnectorException.class)
+    @Test(expectedExceptions = ConnectorException.class)
     public void createExistingAccount() {
         final Set<Attribute> attrs = new HashSet<Attribute>();
         attrs.add(AttributeBuilder.build(Name.NAME, "root"));
@@ -93,7 +92,7 @@ public class SolarisCreateTest extends SolarisTestBase {
         getFacade().create(ObjectClass.ACCOUNT, attrs, null);
     }
 
-    @Test(expected = ConnectorException.class)
+    @Test(expectedExceptions = ConnectorException.class)
     public void createExistingGroup() {
         final Set<Attribute> attrs = new HashSet<Attribute>();
         attrs.add(AttributeBuilder.build(Name.NAME, "root"));
@@ -114,8 +113,8 @@ public class SolarisCreateTest extends SolarisTestBase {
             // missing group)
             String command = (!getConnection().isNis()) ? "cat /etc/group | grep '" + groupName + "'" : "ypcat group | grep '" + groupName + "'";
             String out = getConnection().executeCommand(command);
-            Assert.assertTrue(out.contains(groupName));
-            Assert.assertTrue(out.contains("root"));
+            AssertJUnit.assertTrue(out.contains(groupName));
+            AssertJUnit.assertTrue(out.contains("root"));
         } finally {
             // cleanup the created group
             if (!getConnection().isNis()) {

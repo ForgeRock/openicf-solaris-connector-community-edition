@@ -23,20 +23,19 @@
 
 package org.identityconnectors.solaris.operation.search;
 
-import junit.framework.Assert;
-
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.solaris.attr.NativeAttribute;
 import org.identityconnectors.solaris.test.SolarisTestBase;
-import org.junit.Test;
 
 public class ProfilesCommandTest extends SolarisTestBase {
     @Test
     public void test() {
         Attribute result = ProfilesCommand.getProfilesAttributeFor("root", getConnection());
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getValue());
-        Assert.assertEquals(NativeAttribute.PROFILES.getName(), result.getName());
+        AssertJUnit.assertNotNull(result);
+        AssertJUnit.assertNotNull(result.getValue());
+        AssertJUnit.assertEquals(NativeAttribute.PROFILES.getName(), result.getName());
     }
     
     @Override

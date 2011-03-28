@@ -22,12 +22,12 @@
  */
 package org.identityconnectors.solaris.attr;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import junit.framework.Assert;
 
 import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.common.Pair;
@@ -47,7 +47,6 @@ import org.identityconnectors.framework.common.objects.filter.FilterBuilder;
 import org.identityconnectors.solaris.operation.PasswdCommandTest;
 import org.identityconnectors.solaris.test.SolarisTestBase;
 import org.identityconnectors.test.common.ToListResultsHandler;
-import org.junit.Test;
 
 /**
  * Hub for {@link AccountAttribute} tests.
@@ -103,7 +102,7 @@ public class AccountAttributeTest extends SolarisTestBase {
         // equals("1/1/2010", "112010") == true
         // equals("1/2/2010", "112010") == false
         public boolean equals(List<? extends Object> o1, List<? extends Object> o2) {
-            Assert.assertTrue(o1.size() == 1 && o2.size() == 1);
+            AssertJUnit.assertTrue(o1.size() == 1 && o2.size() == 1);
             String first = o1.get(0).toString();
             String second = o2.get(0).toString();
             first = reformat(first);
@@ -138,7 +137,7 @@ public class AccountAttributeTest extends SolarisTestBase {
         if (m.find()) {
             thisYear = Integer.valueOf(currentDate.substring(m.start(), m.end()));
         } else {
-            Assert.fail("wrong date received, no 4-digit year present: " + currentDate);
+            AssertJUnit.fail("wrong date received, no 4-digit year present: " + currentDate);
         }
         
         String createDate = formatTestDate(thisYear + 3);
@@ -166,7 +165,7 @@ public class AccountAttributeTest extends SolarisTestBase {
     public void testExpireNegative() {
         try {
             genericTest(AccountAttribute.EXPIRE, CollectionUtil.newList("01/01/84"/* a past date */), CollectionUtil.newList("01/01/80"), "cmark", dateComparator);
-            Assert.fail("past date should fail");
+            AssertJUnit.fail("past date should fail");
         } catch (ConnectorException ex) {
             // OK
         }
@@ -193,14 +192,14 @@ public class AccountAttributeTest extends SolarisTestBase {
             // check if user exists
             String loginsCmd = (!getConnection().isNis()) ? "logins -oxma -l " + username : "ypmatch \"" + username + "\" passwd";
             String out = getConnection().executeCommand(loginsCmd);
-            Assert.assertTrue("user " + username + " is missing, buffer: <" + out + ">", out.contains(username));
+            AssertJUnit.assertTrue("user " + username + " is missing, buffer: <" + out + ">", out.contains(username));
 
             try {
                 getFacade().authenticate(ObjectClass.ACCOUNT, username, new GuardedString(password.toCharArray()), null);
-                Assert.fail("expected to wait for 'new password:' prompt failed.");
+                AssertJUnit.fail("expected to wait for 'new password:' prompt failed.");
             } catch (ConnectorException ex) {
                 if (!ex.getMessage().contains("New Password:")) {
-                    Assert.fail("expected to wait for 'new password:' prompt failed with exception: " + ex.getMessage());
+                    AssertJUnit.fail("expected to wait for 'new password:' prompt failed with exception: " + ex.getMessage());
                 } else {
                     log.ok("test testResetPassword passed");
                 }
@@ -246,20 +245,20 @@ public class AccountAttributeTest extends SolarisTestBase {
             getFacade().authenticate(ObjectClass.ACCOUNT, username, new GuardedString(password.toCharArray()), null);
             // get the date
             String out = getConnection().executeCommand("date");
-            Assert.assertTrue(StringUtil.isNotBlank(out));
+            AssertJUnit.assertTrue(StringUtil.isNotBlank(out));
             String month = out.split(" ")[1];
 
             // check that last attribute contains the month of last login.
             ToListResultsHandler handler = new ToListResultsHandler();
             getFacade().search(ObjectClass.ACCOUNT, FilterBuilder.equalTo(AttributeBuilder.build(Name.NAME, username)), handler,
                     new OperationOptionsBuilder().setAttributesToGet(AccountAttribute.TIME_LAST_LOGIN.getName()).build());
-            Assert.assertTrue(handler.getObjects().size() >= 1);
+            AssertJUnit.assertTrue(handler.getObjects().size() >= 1);
             ConnectorObject co = handler.getObjects().get(0);
             Attribute lastAttr = co.getAttributeByName(AccountAttribute.TIME_LAST_LOGIN.getName());
             String lastValue = AttributeUtil.getStringValue(lastAttr);
             String msg = String.format("expected to found the current login's month '%s' in the value of %s attribute command '%s', but it is missing.",
                     AccountAttribute.TIME_LAST_LOGIN.getName(), month, lastValue);
-            Assert.assertTrue(msg, StringUtil.isNotBlank(lastValue) && lastValue.contains(month));
+            AssertJUnit.assertTrue(msg, StringUtil.isNotBlank(lastValue) && lastValue.contains(month));
         } finally {
             getFacade().delete(ObjectClass.ACCOUNT, new Uid(username), null);
         }
@@ -304,16 +303,16 @@ public class AccountAttributeTest extends SolarisTestBase {
             // check if create value was set
             handler = new ToListResultsHandler();
             getFacade().search(ObjectClass.ACCOUNT, FilterBuilder.equalTo(AttributeBuilder.build(Name.NAME, username)), handler, new OperationOptionsBuilder().setAttributesToGet(attr.getName()).build());
-            Assert.assertTrue(handler.getObjects().size() > 0);
-            Assert.assertTrue(eq.equals(createValue, handler.getObjects().get(0).getAttributeByName(attr.getName()).getValue()));
+            AssertJUnit.assertTrue(handler.getObjects().size() > 0);
+            AssertJUnit.assertTrue(eq.equals(createValue, handler.getObjects().get(0).getAttributeByName(attr.getName()).getValue()));
             
             // update the value
             getFacade().update(ObjectClass.ACCOUNT, new Uid(username), CollectionUtil.newSet(AttributeBuilder.build(attr.getName(), updateValue)), null);
             // check if update value was set
             handler = new ToListResultsHandler();
             getFacade().search(ObjectClass.ACCOUNT, FilterBuilder.equalTo(AttributeBuilder.build(Name.NAME, username)), handler, new OperationOptionsBuilder().setAttributesToGet(attr.getName()).build());
-            Assert.assertTrue(handler.getObjects().size() > 0);
-            Assert.assertTrue(eq.equals(updateValue, handler.getObjects().get(0).getAttributeByName(attr.getName()).getValue()));
+            AssertJUnit.assertTrue(handler.getObjects().size() > 0);
+            AssertJUnit.assertTrue(eq.equals(updateValue, handler.getObjects().get(0).getAttributeByName(attr.getName()).getValue()));
         } finally {
             try {
                 getFacade().delete(ObjectClass.ACCOUNT, new Uid(username), null);

@@ -22,6 +22,8 @@
  */
 package org.identityconnectors.solaris.operation.search;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -31,8 +33,6 @@ import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.solaris.attr.NativeAttribute;
 import org.identityconnectors.solaris.test.SolarisTestBase;
-import org.junit.Assert;
-import org.junit.Test;
 
 
 public class GroupIteratorTest extends SolarisTestBase {
@@ -52,17 +52,17 @@ public class GroupIteratorTest extends SolarisTestBase {
         while (gi.hasNext()) {
             SolarisEntry currentGroup = gi.next();
             retrievedGroups.add(currentGroup.getName());
-            Assert.assertNotNull(currentGroup.searchForAttribute(NativeAttribute.ID));
+            AssertJUnit.assertNotNull(currentGroup.searchForAttribute(NativeAttribute.ID));
             Attribute users = currentGroup.searchForAttribute(NativeAttribute.USERS);
             for (Object it : users.getValue()) {
-                Assert.assertNotNull(it);
+                AssertJUnit.assertNotNull(it);
             }
         }
-        Assert.assertEquals(CollectionUtil.newSet(groups), CollectionUtil.newSet(retrievedGroups));
+        AssertJUnit.assertEquals(CollectionUtil.newSet(groups), CollectionUtil.newSet(retrievedGroups));
         
         try {
             gi.next();
-            Assert.fail("no Exception was thrown after invalid call of next.");
+            AssertJUnit.fail("no Exception was thrown after invalid call of next.");
         } catch (NoSuchElementException nex) {
             // OK
         }

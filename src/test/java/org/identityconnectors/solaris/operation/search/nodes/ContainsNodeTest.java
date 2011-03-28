@@ -22,11 +22,10 @@
  */
 package org.identityconnectors.solaris.operation.search.nodes;
 
-import junit.framework.Assert;
-
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.identityconnectors.solaris.attr.NativeAttribute;
 import org.identityconnectors.solaris.operation.search.SolarisEntry;
-import org.junit.Test;
 
 public class ContainsNodeTest {
     @Test
@@ -34,16 +33,16 @@ public class ContainsNodeTest {
         // not negated result
         Node swn = new ContainsNode(NativeAttribute.NAME, false, "FooBar");
         boolean result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").addAttr(NativeAttribute.NAME, "XFooBarBaz").build());
-        Assert.assertTrue(result);
+        AssertJUnit.assertTrue(result);
         result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").addAttr(NativeAttribute.NAME, "XFooBaz").build());
-        Assert.assertFalse(result);
+        AssertJUnit.assertFalse(result);
         
         // negated result
         swn = new ContainsNode(NativeAttribute.NAME, true, "FooBar");
         result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").addAttr(NativeAttribute.NAME, "XFooBarBaz").build());
-        Assert.assertFalse(result);
+        AssertJUnit.assertFalse(result);
         result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").addAttr(NativeAttribute.NAME, "XFooBaz").build());
-        Assert.assertTrue(result);
+        AssertJUnit.assertTrue(result);
         
     }
 }

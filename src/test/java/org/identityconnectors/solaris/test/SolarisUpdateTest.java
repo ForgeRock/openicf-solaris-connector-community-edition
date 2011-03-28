@@ -22,11 +22,11 @@
  */
 package org.identityconnectors.solaris.test;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import junit.framework.Assert;
 
 import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.common.security.GuardedString;
@@ -35,7 +35,6 @@ import org.identityconnectors.framework.common.objects.AttributeBuilder;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.Uid;
 import org.identityconnectors.solaris.attr.GroupAttribute;
-import org.junit.Test;
 
 public class SolarisUpdateTest extends SolarisTestBase {
 
@@ -60,25 +59,25 @@ public class SolarisUpdateTest extends SolarisTestBase {
             getFacade().authenticate(ObjectClass.ACCOUNT, username, newPassword, null);
         } catch (RuntimeException ex) {
             ex.printStackTrace();
-            Assert.fail(String.format("Authenticate failed for user with changed password: '%s'\n ExceptionMessage: %s", username, ex.getMessage()));
+            AssertJUnit.fail(String.format("Authenticate failed for user with changed password: '%s'\n ExceptionMessage: %s", username, ex.getMessage()));
         }
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expectedExceptions = RuntimeException.class)
     public void unknownObjectClass() {
         String username = getConfiguration().getRootUser();
         Set<Attribute> replaceAttributes = CollectionUtil.newSet(AttributeBuilder.buildPassword("buzz".toCharArray()));
         getFacade().update(new ObjectClass("NONEXISTING_OBJECTCLASS"), new Uid(username), replaceAttributes, null);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expectedExceptions = RuntimeException.class)
     public void testUpdateUnknownUsername() {
         Set<Attribute> replaceAttributes = CollectionUtil.newSet(AttributeBuilder.buildPassword("buzz".toCharArray()));
 
         getFacade().update(ObjectClass.ACCOUNT, new Uid("NONEXISTING_UID___"), replaceAttributes, null);
     }
     
-    @Test(expected = RuntimeException.class)
+    @Test(expectedExceptions = RuntimeException.class)
     public void testUpdateUnknownGroupname() {
         Set<Attribute> replaceAttributes = CollectionUtil.newSet(AttributeBuilder.build(GroupAttribute.USERS.getName(), Collections.emptyList()));
 
@@ -93,15 +92,15 @@ public class SolarisUpdateTest extends SolarisTestBase {
         // verify if group exists
         final String command = (!getConnection().isNis()) ? "cat /etc/group | grep '" + groupName + "'" : "ypcat group | grep '" + groupName + "'";
         String output = getConnection().executeCommand(command);
-        Assert.assertTrue(output.contains(groupName));
+        AssertJUnit.assertTrue(output.contains(groupName));
 
         Set<Attribute> replaceAttributes = CollectionUtil.newSet(AttributeBuilder.build(GroupAttribute.USERS.getName(), CollectionUtil.newList("root", username)));
         getFacade().update(ObjectClass.GROUP, new Uid(groupName), replaceAttributes, null);
         output = getConnection().executeCommand(command);
         String msg = "Output is missing attribute '%s', buffer: <%s>";
-        Assert.assertTrue(String.format(msg, groupName, output), output.contains(groupName));
-        Assert.assertTrue(String.format(msg, username, output), output.contains(username));
-        Assert.assertTrue(String.format(msg, "root", output), output.contains("root"));
+        AssertJUnit.assertTrue(String.format(msg, groupName, output), output.contains(groupName));
+        AssertJUnit.assertTrue(String.format(msg, username, output), output.contains(username));
+        AssertJUnit.assertTrue(String.format(msg, "root", output), output.contains("root"));
     }
 
     /*    ************* AUXILIARY METHODS *********** */

@@ -22,6 +22,8 @@
  */
 package org.identityconnectors.solaris;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,9 +34,7 @@ import org.identityconnectors.common.security.GuardedString;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.solaris.test.SolarisTestBase;
 import org.identityconnectors.solaris.test.SolarisTestCommon;
-import org.junit.Assert;
 import org.junit.Ignore;
-import org.junit.Test;
 
 public class SolarisConnectionTest extends SolarisTestBase {
     
@@ -67,7 +67,7 @@ public class SolarisConnectionTest extends SolarisTestBase {
             getConnection().executeCommand(
                     String.format("echo \"%s: ahoj ship\"", ERROR), 
                     rejects);
-            Assert.fail("no exception thrown, when error found.");
+            AssertJUnit.fail("no exception thrown, when error found.");
         } catch (ConnectorException e) {
             // OK
         }
@@ -83,12 +83,12 @@ public class SolarisConnectionTest extends SolarisTestBase {
             //conn.executeCommand(String.format("export timeout=\"%s\" && echo  \"%s: ahoj\" && sleep \"$timeout\" && echo  \"ship\" && sleep \"$timeout\" && echo  \"egg\" && sleep \"$timeout\" && echo  \"spam\" && sleep \"$timeout\" && echo  \"%s\"", TIMEOUT_BETWEEN_MSGS, ERROR_MARKER, LAST_ECHOED_INFO), rejects);
             // Weaker test
             getConnection().executeCommand(String.format("export timeout=\"%s\" && echo  \"%s: ahoj\" && sleep \"$timeout\" && echo \"%s\"", TIMEOUT_BETWEEN_MSGS, ERROR_MARKER, LAST_ECHOED_INFO), rejects);
-            Assert.fail("no exception thrown, when error found.");
+            AssertJUnit.fail("no exception thrown, when error found.");
         } catch (ConnectorException e) {
             final String exMsg = e.getMessage();
             String msg = String.format("Buffer <%s> doesn't containt the last echoed info: '%s'.", exMsg, LAST_ECHOED_INFO);
             //System.out.println("TEST: found: <"  exMsg  ">");
-            Assert.assertTrue(msg, exMsg.contains(LAST_ECHOED_INFO));
+            AssertJUnit.assertTrue(msg, exMsg.contains(LAST_ECHOED_INFO));
         }
     }
     
@@ -101,7 +101,7 @@ public class SolarisConnectionTest extends SolarisTestBase {
 
         try {
             getConnection().executeCommand(String.format("echo \"%s %s\"", errMarker, MSG), CollectionUtil.newSet(errMarker), CollectionUtil.newSet(MSG));
-            Assert.fail("no exception thrown when error should be found in the output.");
+            AssertJUnit.fail("no exception thrown when error should be found in the output.");
         } catch (ConnectorException ex) {
             //OK
         }
@@ -122,7 +122,7 @@ public class SolarisConnectionTest extends SolarisTestBase {
         SolarisConnection conn = new SolarisConnection(config);
         
         String out = conn.executeCommand("echo 'ahoj ship'");
-        Assert.assertTrue(out.contains("ahoj ship"));
+        AssertJUnit.assertTrue(out.contains("ahoj ship"));
         conn.dispose();
     }
     
@@ -140,7 +140,7 @@ public class SolarisConnectionTest extends SolarisTestBase {
         SolarisConnection conn = new SolarisConnection(config);
         
         String out = conn.executeCommand("echo 'ahoj ship'");
-        Assert.assertTrue(out.contains("ahoj ship"));
+        AssertJUnit.assertTrue(out.contains("ahoj ship"));
         conn.dispose();        
     }
     
@@ -149,12 +149,12 @@ public class SolarisConnectionTest extends SolarisTestBase {
         try {
             getConnection().checkAlive();
         } catch (Exception ex) {
-            Assert.fail("no exception is expected.");
+            AssertJUnit.fail("no exception is expected.");
         }
         getConnection().dispose();
         try {
             getConnection().checkAlive();
-            Assert.fail("exception should be thrown");
+            AssertJUnit.fail("exception should be thrown");
         } catch (Exception ex) {
             // OK
         }
@@ -171,7 +171,7 @@ public class SolarisConnectionTest extends SolarisTestBase {
         String exploit = "nonSensePassWord \n echo 'Popeye'";
         try {
             getConnection().sendPassword(new GuardedString(exploit.toCharArray()));
-            Assert.fail("no exception thrown  upon sending a password exploit.");
+            AssertJUnit.fail("no exception thrown  upon sending a password exploit.");
         } catch (IllegalArgumentException ex) {
             // OK
         }
@@ -197,7 +197,7 @@ public class SolarisConnectionTest extends SolarisTestBase {
         config.setHost("111.111.111.111");
         try {
             new SolarisConnection(config).checkAlive();
-            Assert.fail("Expected bad host to fail.");
+            AssertJUnit.fail("Expected bad host to fail.");
         } catch (Exception ex) {
             // OK
         }
@@ -207,7 +207,7 @@ public class SolarisConnectionTest extends SolarisTestBase {
         config.setPort(1);
         try {
             new SolarisConnection(config).checkAlive();
-            Assert.fail("Expected bad port to fail.");
+            AssertJUnit.fail("Expected bad port to fail.");
         } catch (Exception ex) {
             // OK
         }
@@ -221,7 +221,7 @@ public class SolarisConnectionTest extends SolarisTestBase {
         }
         try {
             new SolarisConnection(config).checkAlive();
-            Assert.fail("Expected bad admin to fail.");
+            AssertJUnit.fail("Expected bad admin to fail.");
         } catch (Exception ex) {
             // OK
         }
@@ -238,7 +238,7 @@ public class SolarisConnectionTest extends SolarisTestBase {
             }
             try {
                 new SolarisConnection(config).checkAlive();
-                Assert.fail("Expected bad admin password to fail.");
+                AssertJUnit.fail("Expected bad admin password to fail.");
             } catch (Exception ex) {
                 // OK
             }
@@ -253,7 +253,7 @@ public class SolarisConnectionTest extends SolarisTestBase {
         }
         try {
             new SolarisConnection(config).checkAlive();
-            Assert.fail("Expected bad shell prompt to fail.");
+            AssertJUnit.fail("Expected bad shell prompt to fail.");
         } catch (Exception ex) {
             // OK
         }
@@ -263,7 +263,7 @@ public class SolarisConnectionTest extends SolarisTestBase {
         try {
             config.setConnectionType("nonExistingConnetionType");
             new SolarisConnection(config).checkAlive();
-            Assert.fail("Expected bad connection type to fail.");
+            AssertJUnit.fail("Expected bad connection type to fail.");
         } catch (Exception ex) {
             // OK
         }
@@ -290,7 +290,8 @@ public class SolarisConnectionTest extends SolarisTestBase {
         testSessionRepetitiveCreation(config);
     }
 
-    private void testSessionRepetitiveCreation(SolarisConfiguration config) {
+    @Test(enabled = false)
+	private void testSessionRepetitiveCreation(SolarisConfiguration config) {
         try {
             for (int i = 0; i < 100; i++) {
                 SolarisConnection connection = new SolarisConnection(config);
@@ -302,7 +303,7 @@ public class SolarisConnectionTest extends SolarisTestBase {
                 }
             }
         } catch (Exception ex) {
-            Assert.fail("no exception should be thrown when cyclically calling creating and closing a connection.");
+            AssertJUnit.fail("no exception should be thrown when cyclically calling creating and closing a connection.");
         }
     }
     
@@ -338,7 +339,7 @@ public class SolarisConnectionTest extends SolarisTestBase {
             log.info("skipping testIsVersionLT10() because test property '" + testPropName + "' is not defined.");
         }
         
-        Assert.assertEquals(isVersionLT10expected, getConnection().isVersionLT10());
+        AssertJUnit.assertEquals(isVersionLT10expected, getConnection().isVersionLT10());
     }
 
     @Override

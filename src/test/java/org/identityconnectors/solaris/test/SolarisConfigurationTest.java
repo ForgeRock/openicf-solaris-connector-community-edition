@@ -22,13 +22,12 @@
  */
 package org.identityconnectors.solaris.test;
 
-import junit.framework.Assert;
-
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.identityconnectors.common.security.GuardedString;
 import org.identityconnectors.framework.common.exceptions.ConfigurationException;
 import org.identityconnectors.solaris.SolarisConfiguration;
 import org.junit.Ignore;
-import org.junit.Test;
 
 public class SolarisConfigurationTest {
     @Test
@@ -39,49 +38,49 @@ public class SolarisConfigurationTest {
     }
     
     /* **************** "MISSING" PROPERTY TESTS ***************** */
-    @Test(expected = ConfigurationException.class)
+    @Test(expectedExceptions = ConfigurationException.class)
     public void testMissingUsername() {
         SolarisConfiguration config = getConfiguration();
         config.setLoginUser(null);
         config.validate();
-        Assert.fail("Configuration allowed a null admin username.");
+        AssertJUnit.fail("Configuration allowed a null admin username.");
     }
     
-    @Test(expected = ConfigurationException.class)
+    @Test(expectedExceptions = ConfigurationException.class)
     public void testMissingPassword() {
         SolarisConfiguration config = getConfiguration();
         config.setPassword(null);
         config.validate();
-        Assert.fail("Configuration allowed a null password.");
+        AssertJUnit.fail("Configuration allowed a null password.");
     }
     
-    @Test(expected = ConfigurationException.class)
+    @Test(expectedExceptions = ConfigurationException.class)
     public void testMissingHostname() {
         SolarisConfiguration config = getConfiguration();
         config.setHost(null);
         config.validate();
-        Assert.fail("Configuration allowed a null hostname.");
+        AssertJUnit.fail("Configuration allowed a null hostname.");
     }
     
     private SolarisConfiguration getConfiguration() {
         return SolarisTestCommon.createConfiguration();
     }
 
-    @Test(expected = ConfigurationException.class)
+    @Test(expectedExceptions = ConfigurationException.class)
     public void testMissingPort() {
         SolarisConfiguration config = getConfiguration();
         config.setPort(-1);
         config.validate();
-        Assert.fail("Configuration allowed a null port.");
+        AssertJUnit.fail("Configuration allowed a null port.");
     }
     
-    @Test(expected = ConfigurationException.class)
+    @Test(expectedExceptions = ConfigurationException.class)
     public void testMissingCredentials() {
         SolarisConfiguration config = getConfiguration();
         config.setRootUser("root");
         config.setCredentials(null);
         config.validate();
-        Assert.fail("Configuration allowed a null credential when rootUser was defined");
+        AssertJUnit.fail("Configuration allowed a null credential when rootUser was defined");
     }
     
     @Test
@@ -93,7 +92,7 @@ public class SolarisConfigurationTest {
         config.setRootShellPrompt(null);
         config.setRootUser(null);
         config.setCredentials(null);
-        Assert.assertFalse(config.isSuAuthorization());
+        AssertJUnit.assertFalse(config.isSuAuthorization());
         
         config = getConfiguration();
         config.setLoginUser("loginuser");
@@ -101,7 +100,7 @@ public class SolarisConfigurationTest {
         config.setRootUser("rootUser");
         config.setCredentials(dummyPassword);
         config.setRootShellPrompt("#");
-        Assert.assertTrue(config.isSuAuthorization());
+        AssertJUnit.assertTrue(config.isSuAuthorization());
         
         config = getConfiguration();
         final String loginUser = "sameLoginUser";
@@ -110,7 +109,7 @@ public class SolarisConfigurationTest {
         config.setRootUser(loginUser);
         config.setCredentials(dummyPassword);
         config.setRootShellPrompt("#");
-        Assert.assertFalse(config.isSuAuthorization());
+        AssertJUnit.assertFalse(config.isSuAuthorization());
     }
     
     @Test
@@ -121,7 +120,7 @@ public class SolarisConfigurationTest {
         config.setRootShellPrompt("#");
         try {
             config.validate();
-            Assert.fail("configurationException expected for missing credentials.");
+            AssertJUnit.fail("configurationException expected for missing credentials.");
         } catch (ConfigurationException ex) {
             //OK
         }
@@ -132,7 +131,7 @@ public class SolarisConfigurationTest {
         config.setRootShellPrompt(null);
         try {
             config.validate();
-            Assert.fail("configurationException expected for missing credentials.");
+            AssertJUnit.fail("configurationException expected for missing credentials.");
         } catch (ConfigurationException ex) {
             //OK
         }
@@ -141,6 +140,6 @@ public class SolarisConfigurationTest {
     @Test @Ignore // TODO
     public void testGetMessageProperty() {
         String result = getConfiguration().getMessage("SOLARIS");
-        Assert.assertTrue(result.equals("Solaris"));
+        AssertJUnit.assertTrue(result.equals("Solaris"));
     }
 }

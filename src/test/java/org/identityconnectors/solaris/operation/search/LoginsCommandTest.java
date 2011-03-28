@@ -23,27 +23,26 @@
 
 package org.identityconnectors.solaris.operation.search;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.Set;
-
-import junit.framework.Assert;
 
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.solaris.attr.NativeAttribute;
 import org.identityconnectors.solaris.test.SolarisTestBase;
-import org.junit.Test;
 
 public class LoginsCommandTest extends SolarisTestBase {
 
     @Test
     public void test() {
         SolarisEntry result = LoginsCommand.getAttributesFor("root", getConnection());
-        Assert.assertTrue(result.getAttributeSet().size() >= 5);
+        AssertJUnit.assertTrue(result.getAttributeSet().size() >= 5);
         Set<Attribute> attrSet = result.getAttributeSet();
         for (Attribute attribute : attrSet) {
             if (attribute.getName().equals(NativeAttribute.NAME)) {
-                Assert.assertNotNull(attribute.getValue());
-                Assert.assertTrue(attribute.getValue().size() == 1);
-                Assert.assertEquals("root", attribute.getValue().get(0));
+                AssertJUnit.assertNotNull(attribute.getValue());
+                AssertJUnit.assertTrue(attribute.getValue().size() == 1);
+                AssertJUnit.assertEquals("root", attribute.getValue().get(0));
                 break;
             }
         }

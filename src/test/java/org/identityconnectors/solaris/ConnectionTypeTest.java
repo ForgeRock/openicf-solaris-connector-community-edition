@@ -22,19 +22,19 @@
  */
 package org.identityconnectors.solaris;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.identityconnectors.solaris.ConnectionType;
-import org.junit.Assert;
-import org.junit.Test;
 
 public class ConnectionTypeTest {
     @Test
     public void testGoodConversion() {
-        Assert.assertTrue(ConnectionType.toConnectionType("telnet").equals(ConnectionType.TELNET));
-        Assert.assertTrue(ConnectionType.toConnectionType("TELNET").equals(ConnectionType.TELNET));
-        Assert.assertTrue(ConnectionType.toConnectionType("TeLnet").equals(ConnectionType.TELNET));
-        Assert.assertTrue(ConnectionType.toConnectionType("sSh").equals(ConnectionType.SSH));
-        Assert.assertTrue(ConnectionType.toConnectionType("SSH").equals(ConnectionType.SSH));
-        Assert.assertTrue(ConnectionType.toConnectionType("ssh").equals(ConnectionType.SSH));
+        AssertJUnit.assertTrue(ConnectionType.toConnectionType("telnet").equals(ConnectionType.TELNET));
+        AssertJUnit.assertTrue(ConnectionType.toConnectionType("TELNET").equals(ConnectionType.TELNET));
+        AssertJUnit.assertTrue(ConnectionType.toConnectionType("TeLnet").equals(ConnectionType.TELNET));
+        AssertJUnit.assertTrue(ConnectionType.toConnectionType("sSh").equals(ConnectionType.SSH));
+        AssertJUnit.assertTrue(ConnectionType.toConnectionType("SSH").equals(ConnectionType.SSH));
+        AssertJUnit.assertTrue(ConnectionType.toConnectionType("ssh").equals(ConnectionType.SSH));
     }
     
     @Test
@@ -42,14 +42,14 @@ public class ConnectionTypeTest {
         try {
             final String test = "bassh";
             ConnectionType.toConnectionType(test);
-            Assert.fail(String.format("Error, accepted: %s", test));
+            AssertJUnit.fail(String.format("Error, accepted: %s", test));
         } catch (RuntimeException ex) {
             //ok
         }
         try {
             final String test = "telnetSSh";
             ConnectionType.toConnectionType(test);
-            Assert.fail(String.format("Error, accepted: %s", test));
+            AssertJUnit.fail(String.format("Error, accepted: %s", test));
         } catch (RuntimeException ex) {
             //ok
         }

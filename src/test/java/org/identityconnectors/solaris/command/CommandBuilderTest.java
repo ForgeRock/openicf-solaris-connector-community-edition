@@ -22,14 +22,13 @@
  */
 package org.identityconnectors.solaris.command;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.identityconnectors.solaris.SolarisConnection;
 import org.identityconnectors.solaris.test.SolarisTestCommon;
-import org.junit.Test;
 
 public class CommandBuilderTest {
     @Test
@@ -40,7 +39,7 @@ public class CommandBuilderTest {
         String expected = "command arg1 arg2 arg3";
         List<String> parsedActual = parseList(actual);
         List<String> parsedExpected = parseList(expected);
-        Assert.assertEquals(parsedExpected, parsedActual);
+        AssertJUnit.assertEquals(parsedExpected, parsedActual);
     }
 
     private List<String> parseList(String actual) {

@@ -22,6 +22,8 @@
  */
 package org.identityconnectors.solaris.operation.search;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,8 +36,6 @@ import org.identityconnectors.solaris.attr.AccountAttribute;
 import org.identityconnectors.solaris.attr.NativeAttribute;
 import org.identityconnectors.solaris.operation.search.nodes.EqualsNode;
 import org.identityconnectors.solaris.operation.search.nodes.Node;
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * @author David Adam
@@ -50,11 +50,11 @@ public class SolarisFilterTranslatorTest {
         final String connectorAttrName = Name.NAME;
         
         Node result = sft.createEqualsExpression(new EqualsFilter(AttributeBuilder.build(connectorAttrName, username)), false);
-        Assert.assertNotNull(result);
-        Assert.assertTrue(result instanceof EqualsNode);
+        AssertJUnit.assertNotNull(result);
+        AssertJUnit.assertTrue(result instanceof EqualsNode);
         EqualsNode eq = (EqualsNode) result;
-        Assert.assertEquals(AccountAttribute.forAttributeName(connectorAttrName).getNative(), eq.getAttributeName());
-        Assert.assertEquals(username, eq.getSingleValue());
+        AssertJUnit.assertEquals(AccountAttribute.forAttributeName(connectorAttrName).getNative(), eq.getAttributeName());
+        AssertJUnit.assertEquals(username, eq.getSingleValue());
     }
     
     @Test
@@ -70,6 +70,6 @@ public class SolarisFilterTranslatorTest {
         Set<NativeAttribute> result = new HashSet<NativeAttribute>();
         //Node.Traverser.collectAttributeNames(andNode);
         andNode.collectAttributeNames(result);
-        Assert.assertEquals(EnumSet.of(AccountAttribute.forAttributeName(typeOne).getNative(), typeTwo.getNative()), result);
+        AssertJUnit.assertEquals(EnumSet.of(AccountAttribute.forAttributeName(typeOne).getNative(), typeTwo.getNative()), result);
     }
 }

@@ -22,11 +22,11 @@
  */
 package org.identityconnectors.solaris;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.solaris.operation.search.SolarisEntry;
 import org.identityconnectors.solaris.test.SolarisTestBase;
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * @author David Adam
@@ -40,7 +40,7 @@ public class SolarisUtilTest extends SolarisTestBase {
             input.append("a");
         }
         String resultStr = SolarisUtil.limitString(input);
-        Assert.assertTrue(resultStr.contains("\\"));
+        AssertJUnit.assertTrue(resultStr.contains("\\"));
         String[] strs = resultStr.split("\n");
         for (String string : strs) {
             
@@ -48,16 +48,16 @@ public class SolarisUtilTest extends SolarisTestBase {
             final int trimmedStringLength = string.trim().length();
             
             String msg = String.format("String exceeds the maximal limit '%s', as it is: '%s'", limit , trimmedStringLength);
-            Assert.assertTrue(msg, trimmedStringLength <= limit);
+            AssertJUnit.assertTrue(msg, trimmedStringLength <= limit);
         }
     }
     
     @Test
     public void testExists() {
-        Assert.assertTrue(SolarisUtil.exists(ObjectClass.ACCOUNT, new SolarisEntry.Builder("root").build(), getConnection()));
-        Assert.assertFalse(SolarisUtil.exists(ObjectClass.ACCOUNT, new SolarisEntry.Builder("batmans").build(), getConnection()));
-        Assert.assertTrue(SolarisUtil.exists(ObjectClass.GROUP, new SolarisEntry.Builder("root").build(), getConnection()));
-        Assert.assertFalse(SolarisUtil.exists(ObjectClass.GROUP, new SolarisEntry.Builder("batmans").build(), getConnection()));
+        AssertJUnit.assertTrue(SolarisUtil.exists(ObjectClass.ACCOUNT, new SolarisEntry.Builder("root").build(), getConnection()));
+        AssertJUnit.assertFalse(SolarisUtil.exists(ObjectClass.ACCOUNT, new SolarisEntry.Builder("batmans").build(), getConnection()));
+        AssertJUnit.assertTrue(SolarisUtil.exists(ObjectClass.GROUP, new SolarisEntry.Builder("root").build(), getConnection()));
+        AssertJUnit.assertFalse(SolarisUtil.exists(ObjectClass.GROUP, new SolarisEntry.Builder("batmans").build(), getConnection()));
     }
 
     @Override

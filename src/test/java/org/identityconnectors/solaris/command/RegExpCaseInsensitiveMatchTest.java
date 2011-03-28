@@ -22,13 +22,12 @@
  */
 package org.identityconnectors.solaris.command;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.identityconnectors.solaris.command.RegExpCaseInsensitiveMatch;
-import org.junit.Assert;
-import org.junit.Test;
-
 import expect4j.Closure;
 import expect4j.ExpectState;
 
@@ -38,15 +37,15 @@ public class RegExpCaseInsensitiveMatchTest {
         String pattern = "AbCd";
         String input = "abcd";
         try {
-            Assert.assertTrue(matchPatternCaseInsensitively(input, pattern));
+            AssertJUnit.assertTrue(matchPatternCaseInsensitively(input, pattern));
             
             input = "aBcD";
-            Assert.assertTrue(matchPatternCaseInsensitively(input, pattern));
+            AssertJUnit.assertTrue(matchPatternCaseInsensitively(input, pattern));
             
             input = "abcXD";
-            Assert.assertFalse(matchPatternCaseInsensitively(input, pattern));
+            AssertJUnit.assertFalse(matchPatternCaseInsensitively(input, pattern));
         } catch (MalformedPatternException e) {
-            Assert.fail("no exceptions should be thrown.");
+            AssertJUnit.fail("no exceptions should be thrown.");
         }
     }
 

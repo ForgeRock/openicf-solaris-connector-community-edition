@@ -22,11 +22,10 @@
  */
 package org.identityconnectors.solaris.operation.search.nodes;
 
-import junit.framework.Assert;
-
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.identityconnectors.solaris.attr.NativeAttribute;
 import org.identityconnectors.solaris.operation.search.SolarisEntry;
-import org.junit.Test;
 
 public class StartsWithNodeTest {
     @Test
@@ -34,23 +33,23 @@ public class StartsWithNodeTest {
         // not negated result
         Node swn = new StartsWithNode(NativeAttribute.NAME, false, "FooBar");
         boolean result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").addAttr(NativeAttribute.NAME, "FooBarBaz").build());
-        Assert.assertTrue(result);
+        AssertJUnit.assertTrue(result);
         result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").addAttr(NativeAttribute.NAME, "BarBaz").build());
-        Assert.assertFalse(result);
+        AssertJUnit.assertFalse(result);
         result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").addAttr(NativeAttribute.ID, "BarBaz").build());
-        Assert.assertFalse(result);
+        AssertJUnit.assertFalse(result);
         result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").build());
-        Assert.assertFalse(result);
+        AssertJUnit.assertFalse(result);
         
         // negated result
         swn = new StartsWithNode(NativeAttribute.NAME, true, "FooBar");
         result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").addAttr(NativeAttribute.NAME, "FooBarBaz").build());
-        Assert.assertFalse(result);
+        AssertJUnit.assertFalse(result);
         result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").addAttr(NativeAttribute.NAME, "BarBaz").build());
-        Assert.assertTrue(result);
+        AssertJUnit.assertTrue(result);
         result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").addAttr(NativeAttribute.ID, 25).build());
-        Assert.assertTrue(result);
+        AssertJUnit.assertTrue(result);
         result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").build());
-        Assert.assertTrue(result);
+        AssertJUnit.assertTrue(result);
     }
 }

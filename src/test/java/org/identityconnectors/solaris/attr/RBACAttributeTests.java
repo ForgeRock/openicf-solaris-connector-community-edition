@@ -22,11 +22,11 @@
  */
 package org.identityconnectors.solaris.attr;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
-import junit.framework.Assert;
 
 import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.common.logging.Log;
@@ -34,7 +34,6 @@ import org.identityconnectors.framework.common.objects.AttributeBuilder;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.Uid;
 import org.identityconnectors.solaris.test.SolarisTestBase;
-import org.junit.Test;
 
 /**
  * Unit tests for attributes of Role-based access control (RBAC).
@@ -64,12 +63,12 @@ public class RBACAttributeTests extends SolarisTestBase {
          
         // check preconditions
         String checkOperatorProfiles = getConnection().executeCommand("cat /etc/security/prof_attr | grep ^" + profileToUpdate + ":");
-        Assert.assertTrue("test preconditions not satisfied", checkOperatorProfiles.contains(profileToUpdate));
+        AssertJUnit.assertTrue("test preconditions not satisfied", checkOperatorProfiles.contains(profileToUpdate));
 
         // update profile
         getFacade().update(ObjectClass.ACCOUNT, new Uid(username), CollectionUtil.newSet(AttributeBuilder.build(AccountAttribute.PROFILE.getName(), profileToUpdate)), null);
         String profilesOut = getConnection().executeCommand(getConnection().buildCommand("profiles", username));
-        Assert.assertTrue("user has not been updated to match the profiles of '" + profileToUpdate + "' config role.", profilesOut.contains(profileToUpdate));
+        AssertJUnit.assertTrue("user has not been updated to match the profiles of '" + profileToUpdate + "' config role.", profilesOut.contains(profileToUpdate));
     }
     
     /**
@@ -89,15 +88,15 @@ public class RBACAttributeTests extends SolarisTestBase {
         String operatorRole = "Operator";
         getFacade().update(ObjectClass.ACCOUNT, new Uid(username), CollectionUtil.newSet(AttributeBuilder.build(AccountAttribute.PROFILE.getName(), operatorRole)), null);
         String profilesOut = getConnection().executeCommand(getConnection().buildCommand("profiles", username));
-        Assert.assertTrue(profilesOut.contains(operatorRole));
+        AssertJUnit.assertTrue(profilesOut.contains(operatorRole));
         Set<String> profilesBefore = parseProfiles(profilesOut, username);
         
         getFacade().update(ObjectClass.ACCOUNT, new Uid(username), CollectionUtil.newSet(AttributeBuilder.build(AccountAttribute.PROFILE.getName(), profileToUpdate)), null);
         
         profilesOut = getConnection().executeCommand(getConnection().buildCommand("profiles", username));
         Set<String> profilesAfter = parseProfiles(profilesOut, username);
-        Assert.assertTrue(profilesAfter.size() < profilesBefore.size());
-        Assert.assertTrue(!profilesAfter.contains(operatorRole));
+        AssertJUnit.assertTrue(profilesAfter.size() < profilesBefore.size());
+        AssertJUnit.assertTrue(!profilesAfter.contains(operatorRole));
     }
 
     private Set<String> parseProfiles(String profilesOut, String skipString) {
@@ -121,7 +120,7 @@ public class RBACAttributeTests extends SolarisTestBase {
         
         String username = getUsername();
         String rolesOut = getConnection().executeCommand("roles " + username);
-        Assert.assertTrue(rolesOut.contains("No roles"));
+        AssertJUnit.assertTrue(rolesOut.contains("No roles"));
         
         // create a fictive role
         final String fictiveRole = "solarisconnectorrole";
@@ -130,12 +129,12 @@ public class RBACAttributeTests extends SolarisTestBase {
             // set the 'fictiveRole' for the user
             getFacade().update(ObjectClass.ACCOUNT, new Uid(username), CollectionUtil.newSet(AttributeBuilder.build(AccountAttribute.ROLES.getName(), fictiveRole)), null);
             rolesOut = getConnection().executeCommand("roles " + username);
-            Assert.assertTrue(rolesOut.contains(fictiveRole));
+            AssertJUnit.assertTrue(rolesOut.contains(fictiveRole));
             
             // erase all roles for the user
             getFacade().update(ObjectClass.ACCOUNT, new Uid(username), CollectionUtil.newSet(AttributeBuilder.build(AccountAttribute.ROLES.getName(), "")), null);
             rolesOut = getConnection().executeCommand("roles " + username);
-            Assert.assertTrue(rolesOut.contains("No roles"));
+            AssertJUnit.assertTrue(rolesOut.contains("No roles"));
         } finally {
             //delete the fictive role
             getConnection().executeCommand("roledel " + fictiveRole);
@@ -156,20 +155,20 @@ public class RBACAttributeTests extends SolarisTestBase {
         List<String> authorizations = Arrays.asList(authsOut.split(","));
         String msg = String.format("Preconditions were not met. By default users shouldn't have '%s' authorization.", newAuthorization);
         for (String auth : authorizations) {
-            Assert.assertTrue(msg, !auth.contains(newAuthorization));
+            AssertJUnit.assertTrue(msg, !auth.contains(newAuthorization));
         }
         
         // add a new authorization
         getFacade().update(ObjectClass.ACCOUNT, new Uid(username), CollectionUtil.newSet(AttributeBuilder.build(AccountAttribute.AUTHORIZATION.getName(), newAuthorization)), null);
         authsOut = getConnection().executeCommand("auths " + username);
         authorizations = Arrays.asList(authsOut.split(","));
-        Assert.assertTrue(authorizations.contains(newAuthorization));        
+        AssertJUnit.assertTrue(authorizations.contains(newAuthorization));        
         
         // remove new authorization
         getFacade().update(ObjectClass.ACCOUNT, new Uid(username), CollectionUtil.newSet(AttributeBuilder.build(AccountAttribute.AUTHORIZATION.getName(), "")), null);
         authsOut = getConnection().executeCommand("auths " + username);
         authorizations = Arrays.asList(authsOut.split(","));
-        Assert.assertFalse(authorizations.contains(newAuthorization));
+        AssertJUnit.assertFalse(authorizations.contains(newAuthorization));
     }
 
     @Override

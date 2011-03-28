@@ -22,12 +22,11 @@
  */
 package org.identityconnectors.solaris.operation.nis;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.identityconnectors.common.CollectionUtil;
-import org.junit.Test;
 
 public class UpdateNISGroupTest {
     @Test
@@ -35,10 +34,10 @@ public class UpdateNISGroupTest {
         List<String> users = CollectionUtil.newList("foo", "bar", "baz");
         String SEPARATOR = ",";
         String result = UpdateNISGroup.listToString(users, SEPARATOR);
-        Assert.assertEquals("foo,bar,baz", result.trim());
+        AssertJUnit.assertEquals("foo,bar,baz", result.trim());
         
         users = CollectionUtil.newList("foo");
         result = UpdateNISGroup.listToString(users, SEPARATOR);
-        Assert.assertEquals("foo", result.trim());
+        AssertJUnit.assertEquals("foo", result.trim());
     }
 }

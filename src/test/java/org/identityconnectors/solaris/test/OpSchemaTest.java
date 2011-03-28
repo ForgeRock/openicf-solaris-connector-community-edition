@@ -23,10 +23,9 @@
 
 package org.identityconnectors.solaris.test;
 
-import junit.framework.Assert;
-
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.identityconnectors.solaris.SolarisConnector;
-import org.junit.Test;
 
 public class OpSchemaTest {
     @Test
@@ -34,7 +33,7 @@ public class OpSchemaTest {
         SolarisConnector conn1 = new SolarisConnector();
         conn1.init(SolarisTestCommon.createConfiguration());
         SolarisConnector conn = conn1;
-        Assert.assertNotNull(conn.schema());
+        AssertJUnit.assertNotNull(conn.schema());
         conn.dispose();
     }
 }

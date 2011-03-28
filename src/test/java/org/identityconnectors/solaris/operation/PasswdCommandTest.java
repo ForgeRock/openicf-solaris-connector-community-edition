@@ -22,6 +22,8 @@
  */
 package org.identityconnectors.solaris.operation;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.Set;
 
 import org.identityconnectors.common.CollectionUtil;
@@ -41,8 +43,6 @@ import org.identityconnectors.solaris.attr.ConnectorAttribute;
 import org.identityconnectors.solaris.attr.NativeAttribute;
 import org.identityconnectors.solaris.test.SolarisTestBase;
 import org.identityconnectors.test.common.ToListResultsHandler;
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * Set of password attribute related tests. These attributes are:
@@ -86,11 +86,11 @@ public class PasswdCommandTest extends SolarisTestBase {
                 AccountAttribute.MAX.getName(), AccountAttribute.MIN.getName(), AccountAttribute.WARN.getName())).build()
                 );
         
-        Assert.assertTrue(handler.getObjects().size() >= 1);
+        AssertJUnit.assertTrue(handler.getObjects().size() >= 1);
         ConnectorObject result = handler.getObjects().get(0);
-        Assert.assertTrue(controlAttributeValue(2, AccountAttribute.MIN, result));
-        Assert.assertTrue(controlAttributeValue(5, AccountAttribute.MAX, result));
-        Assert.assertTrue(controlAttributeValue(4, AccountAttribute.WARN, result));
+        AssertJUnit.assertTrue(controlAttributeValue(2, AccountAttribute.MIN, result));
+        AssertJUnit.assertTrue(controlAttributeValue(5, AccountAttribute.MAX, result));
+        AssertJUnit.assertTrue(controlAttributeValue(4, AccountAttribute.WARN, result));
     }
     
     @Test
@@ -102,7 +102,7 @@ public class PasswdCommandTest extends SolarisTestBase {
         String username = "batman";
         ToListResultsHandler handler = new ToListResultsHandler();
         getFacade().search(ObjectClass.ACCOUNT, FilterBuilder.equalTo(AttributeBuilder.build(Name.NAME, username)), handler, null);
-        Assert.assertTrue("user '" + username + "' should be cleaned up", handler.getObjects().size() <= 0);
+        AssertJUnit.assertTrue("user '" + username + "' should be cleaned up", handler.getObjects().size() <= 0);
         try {
             Set<Attribute> attrs = CollectionUtil.newSet(
                     AttributeBuilder.build(Name.NAME, username), 
@@ -116,11 +116,11 @@ public class PasswdCommandTest extends SolarisTestBase {
                     new OperationOptionsBuilder().setAttributesToGet(CollectionUtil.newSet(
                     AccountAttribute.MAX.getName(), AccountAttribute.MIN.getName(), AccountAttribute.WARN.getName())).build()
                     );
-            Assert.assertTrue(handler.getObjects().size() >= 1);
+            AssertJUnit.assertTrue(handler.getObjects().size() >= 1);
             ConnectorObject result = handler.getObjects().get(0);
-            Assert.assertTrue(controlAttributeValue(1, AccountAttribute.MIN, result));
-            Assert.assertTrue(controlAttributeValue(4, AccountAttribute.MAX, result));
-            Assert.assertTrue(controlAttributeValue(2, AccountAttribute.WARN, result));
+            AssertJUnit.assertTrue(controlAttributeValue(1, AccountAttribute.MIN, result));
+            AssertJUnit.assertTrue(controlAttributeValue(4, AccountAttribute.MAX, result));
+            AssertJUnit.assertTrue(controlAttributeValue(2, AccountAttribute.WARN, result));
         } finally {
             try {
                 getFacade().delete(ObjectClass.ACCOUNT, new Uid(username), null);
@@ -156,14 +156,14 @@ public class PasswdCommandTest extends SolarisTestBase {
         try {
             getFacade().authenticate(ObjectClass.ACCOUNT, username, password, null);
         } catch (Exception ex) {
-            Assert.fail("failed to authenticate freshly created user: " + username);
+            AssertJUnit.fail("failed to authenticate freshly created user: " + username);
         }
         
         // lock the account, then authenticate should fail
         getFacade().update(ObjectClass.ACCOUNT, new Uid(username), CollectionUtil.newSet(AttributeBuilder.build(AccountAttribute.LOCK.getName(), Boolean.TRUE)), null);
         try {
             getFacade().authenticate(ObjectClass.ACCOUNT, username, password, null);
-            Assert.fail("Locked account should not able to login.");
+            AssertJUnit.fail("Locked account should not able to login.");
         } catch (Exception ex) {
             // OK
         }
@@ -190,7 +190,7 @@ public class PasswdCommandTest extends SolarisTestBase {
             enableTrustedLogin(username);
             try {
                 getFacade().authenticate(ObjectClass.ACCOUNT, username, passwd, null);
-                Assert.fail("expecting to fail when we attempt to authenticate a locked account.");
+                AssertJUnit.fail("expecting to fail when we attempt to authenticate a locked account.");
             } catch (Exception ex) {
                 // OK
             }
@@ -199,7 +199,7 @@ public class PasswdCommandTest extends SolarisTestBase {
             try {
                 getFacade().authenticate(ObjectClass.ACCOUNT, username, passwd, null);
             } catch (Exception ex) {
-                Assert.fail("authentication of an unlocked account should pass, but received a failure.");
+                AssertJUnit.fail("authentication of an unlocked account should pass, but received a failure.");
             }
             
         } finally {
@@ -219,13 +219,13 @@ public class PasswdCommandTest extends SolarisTestBase {
         }
         try {
             getFacade().update(ObjectClass.ACCOUNT, new Uid(getUsername()), CollectionUtil.newSet(AttributeBuilder.build(AccountAttribute.LOCK.getName())), null);
-            Assert.fail("passing null option to Lock should cause failure. It must have a boolean value.");
+            AssertJUnit.fail("passing null option to Lock should cause failure. It must have a boolean value.");
         } catch (Exception ex) {
             // OK
         }
         try {
             getFacade().create(ObjectClass.ACCOUNT, CollectionUtil.newSet(AttributeBuilder.build(Name.NAME, "fooconn"), AttributeBuilder.buildPassword("foo134".toCharArray()), AttributeBuilder.build(AccountAttribute.LOCK.getName())), null);
-            Assert.fail("passing null option to Lock should cause failure. It must have a boolean value.");
+            AssertJUnit.fail("passing null option to Lock should cause failure. It must have a boolean value.");
         } catch (Exception ex) {
             // OK
         } finally {

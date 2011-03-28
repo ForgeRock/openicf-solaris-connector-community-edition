@@ -22,6 +22,8 @@
  */
 package org.identityconnectors.solaris.operation;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.identityconnectors.framework.common.objects.AttributeBuilder;
 import org.identityconnectors.framework.common.objects.Name;
 import org.identityconnectors.framework.common.objects.ObjectClass;
@@ -31,8 +33,6 @@ import org.identityconnectors.solaris.attr.NativeAttribute;
 import org.identityconnectors.solaris.operation.search.SolarisEntry;
 import org.identityconnectors.solaris.test.SolarisTestBase;
 import org.identityconnectors.test.common.ToListResultsHandler;
-import org.junit.Assert;
-import org.junit.Test;
 
 
 public class RenameGroupTest extends SolarisTestBase {
@@ -40,12 +40,12 @@ public class RenameGroupTest extends SolarisTestBase {
     public void testRenameGroup() {
         String groupName = getGroupName();
         
-        Assert.assertTrue(String.format("group '%s' is missing.", groupName), searchForGroup(groupName));
+        AssertJUnit.assertTrue(String.format("group '%s' is missing.", groupName), searchForGroup(groupName));
         
         String newName = "newconngrp";
         RenameGroup.renameGroup(new SolarisEntry.Builder(groupName).addAttr(NativeAttribute.NAME, newName).build(), getConnection());
         try {
-            Assert.assertTrue(String.format("group '%s' is missing.", newName), searchForGroup(newName));
+            AssertJUnit.assertTrue(String.format("group '%s' is missing.", newName), searchForGroup(newName));
         } finally {
             getFacade().delete(ObjectClass.GROUP, new Uid(newName), null);
         }

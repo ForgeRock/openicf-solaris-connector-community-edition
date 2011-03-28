@@ -22,10 +22,10 @@
  */
 package org.identityconnectors.solaris;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.List;
 import java.util.Set;
-
-import junit.framework.Assert;
 
 import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.common.StringUtil;
@@ -47,7 +47,6 @@ import org.identityconnectors.solaris.test.SolarisTestBase;
 import org.identityconnectors.solaris.test.SolarisTestCommon;
 import org.identityconnectors.test.common.ToListResultsHandler;
 import org.junit.Ignore;
-import org.junit.Test;
 
 
 public class SolarisConnectorTest extends SolarisTestBase {
@@ -60,14 +59,14 @@ public class SolarisConnectorTest extends SolarisTestBase {
         Attribute expectedAttribute = AttributeBuilder.build(AccountAttribute.SHELL.getName(), "/bin/sh");
         Set<Attribute> replaceAttrs = CollectionUtil.newSet(expectedAttribute);
         getFacade().update(ObjectClass.ACCOUNT, new Uid(getUsername()), replaceAttrs, null);
-        Assert.assertTrue(checkUser(username, expectedAttribute));
+        AssertJUnit.assertTrue(checkUser(username, expectedAttribute));
         
         // negative test update shell:
         expectedAttribute = AttributeBuilder.build(AccountAttribute.SHELL.getName(), "/nonsense/shell");
         replaceAttrs = CollectionUtil.newSet(expectedAttribute);
         try {
             getFacade().update(ObjectClass.ACCOUNT, new Uid(getUsername()), replaceAttrs, null);
-            Assert.fail("Using bad shell value did not fail.");
+            AssertJUnit.fail("Using bad shell value did not fail.");
         } catch (Exception ex) {
             // OK
         }
@@ -77,7 +76,7 @@ public class SolarisConnectorTest extends SolarisTestBase {
         replaceAttrs = CollectionUtil.newSet(expectedAttribute);
         try {
             getFacade().update(ObjectClass.ACCOUNT, new Uid(getUsername()), replaceAttrs, null);
-            Assert.fail("Changing the primary group to an invalid value did not fail.");
+            AssertJUnit.fail("Changing the primary group to an invalid value did not fail.");
         } catch (Exception ex) {
             // OK
         }
@@ -89,7 +88,7 @@ public class SolarisConnectorTest extends SolarisTestBase {
                     AttributeBuilder.build(AccountAttribute.SECONDARY_GROUP.getName(), "nonsensegroup"));
             try {
                 getFacade().update(ObjectClass.ACCOUNT, new Uid(getUsername()), replaceAttrs, null);
-                Assert.fail("Changing the secondary group to an invalid value did not fail.");
+                AssertJUnit.fail("Changing the secondary group to an invalid value did not fail.");
             } catch (Exception ex) {
                 // OK
             }
@@ -101,7 +100,7 @@ public class SolarisConnectorTest extends SolarisTestBase {
                 AttributeBuilder.build(AccountAttribute.SHELL.getName(), "/invalid/shell"));
         try {
             getFacade().create(ObjectClass.ACCOUNT, attrs, null);
-            Assert.fail("did not fail when creating user with invalid data");
+            AssertJUnit.fail("did not fail when creating user with invalid data");
         } catch (Exception ex) {
             // OK
         } finally {
@@ -124,7 +123,7 @@ public class SolarisConnectorTest extends SolarisTestBase {
                 AttributeBuilder.buildPassword("sample_1".toCharArray()));
         try {
             getFacade().create(ObjectClass.ACCOUNT, attrs, null);
-            Assert.fail("expected exception on create of user with non-unique username (==uid)");
+            AssertJUnit.fail("expected exception on create of user with non-unique username (==uid)");
         } catch (Exception ex) {
             // OK 
         }
@@ -155,11 +154,11 @@ public class SolarisConnectorTest extends SolarisTestBase {
         try {
             String command = (!getConnection().isNis()) ? "logins -oxma -l " + username : "ypmatch " + username + " passwd";
             String out = getConnection().executeCommand(command);
-            Assert.assertTrue("user '" + username + "' is missing", out.contains(username));
+            AssertJUnit.assertTrue("user '" + username + "' is missing", out.contains(username));
             
             try {
                 facade.delete(ObjectClass.ACCOUNT, new Uid(username), null);
-                Assert.fail("deleted the user when deletion should have failed.");
+                AssertJUnit.fail("deleted the user when deletion should have failed.");
             } catch (Exception ex) {
                 // OK
             }
@@ -191,7 +190,7 @@ public class SolarisConnectorTest extends SolarisTestBase {
             cleanGroup(groupName);
             cleanGroup(groupNameForUpdate);
         } catch (Exception ex) {
-            Assert.fail("Failed to clean up preliminary groups.");
+            AssertJUnit.fail("Failed to clean up preliminary groups.");
         }
         
         final Set<Attribute> groupAttrs = CollectionUtil.newSet(
@@ -203,7 +202,7 @@ public class SolarisConnectorTest extends SolarisTestBase {
         // creating a duplicate group, exception expected.
         try {
             getFacade().create(ObjectClass.GROUP, groupAttrs, null);
-            Assert.fail("Attempt to create a duplicate group should fail.");
+            AssertJUnit.fail("Attempt to create a duplicate group should fail.");
         } catch (Exception ex) {
             // OK 
         }
@@ -218,12 +217,12 @@ public class SolarisConnectorTest extends SolarisTestBase {
                 FilterBuilder.equalTo(AttributeBuilder.build(Name.NAME, groupName)), handler, 
                 new OperationOptionsBuilder().setAttributesToGet(attributesToGet).build());
         List<ConnectorObject> result = handler.getObjects();
-        Assert.assertTrue("failed retrieving group: " + groupName, result.size() > 0);
+        AssertJUnit.assertTrue("failed retrieving group: " + groupName, result.size() > 0);
 
         ConnectorObject co = result.get(0);
         if (!getConnection().isNis()) {
             Attribute usersAttr = co.getAttributeByName(GroupAttribute.USERS.getName());
-            Assert.assertNotNull(usersAttr);
+            AssertJUnit.assertNotNull(usersAttr);
             boolean found = false;
             for (Object it : usersAttr.getValue()) {
                 if (it.toString().equals(belongingUser)) {
@@ -232,19 +231,19 @@ public class SolarisConnectorTest extends SolarisTestBase {
                 }
             }
             String msg = String.format("user '%s' is missing from group '%s'.", belongingUser, groupName);
-            Assert.assertTrue(msg, found);
+            AssertJUnit.assertTrue(msg, found);
         }
         
         Attribute gidAttr = co.getAttributeByName(GroupAttribute.GID.getName());
-        Assert.assertNotNull(gidAttr);
+        AssertJUnit.assertNotNull(gidAttr);
         String gid = AttributeUtil.getStringValue(gidAttr);
-        Assert.assertTrue(StringUtil.isNotBlank(gid));
+        AssertJUnit.assertTrue(StringUtil.isNotBlank(gid));
         
         // Create a new group object with a duplicate gid, this one should fail
         try {
             getFacade().create(ObjectClass.GROUP, CollectionUtil.newSet(AttributeBuilder.build(Name.NAME, groupNameForUpdate), 
                     AttributeBuilder.build(GroupAttribute.GID.getName(), gid)), null);
-            Assert.fail("improperly create a gropu with duplicate id, exception should be thrown.");
+            AssertJUnit.fail("improperly create a gropu with duplicate id, exception should be thrown.");
         } catch (Exception ex) {
             // OK
         }
@@ -270,7 +269,7 @@ public class SolarisConnectorTest extends SolarisTestBase {
         Set<Attribute> replaceAttrs = CollectionUtil.newSet(AttributeBuilder.build(Name.NAME, getSecondUsername())); // duplicate username
         try {
             getFacade().update(ObjectClass.ACCOUNT, new Uid(getUsername()), replaceAttrs, null);
-            Assert.fail("expected exception on update of user with non-unique username (==uid)");
+            AssertJUnit.fail("expected exception on update of user with non-unique username (==uid)");
         } catch (Exception ex) {
             // OK 
         }
@@ -293,7 +292,7 @@ public class SolarisConnectorTest extends SolarisTestBase {
                 );
         
         List<ConnectorObject> l = handler.getObjects();
-        Assert.assertTrue("the requested attribute is missing", l.size() == 1);
+        AssertJUnit.assertTrue("the requested attribute is missing", l.size() == 1);
         ConnectorObject co = l.get(0);
         Attribute attr = co.getAttributeByName(expectedAttribute.getName());
         // workaround for shell attribute, as sometimes /bin/sh is a simlink to /sbin/sh, 
@@ -335,7 +334,7 @@ public class SolarisConnectorTest extends SolarisTestBase {
         try {
             getFacade().update(ObjectClass.ACCOUNT, new Uid(getSecondUsername()),
                     CollectionUtil.newSet(AttributeBuilder.build(AccountAttribute.UID.getName(), firstUid)), null);
-            Assert.fail("Update of 'solaris uid' attribute the with an existing uid should throw RuntimeException.");
+            AssertJUnit.fail("Update of 'solaris uid' attribute the with an existing uid should throw RuntimeException.");
         } catch (RuntimeException ex) {
             // OK
         }
@@ -353,7 +352,7 @@ public class SolarisConnectorTest extends SolarisTestBase {
             try {
                 String passwd = new StringBuilder().append("foo").append(controlCharacter).append("bar").toString();
                 getConnection().sendPassword(new GuardedString(passwd.toCharArray()));
-                Assert.fail("Exception should be thrown when attempt to send control chars within the password");
+                AssertJUnit.fail("Exception should be thrown when attempt to send control chars within the password");
             } catch (RuntimeException ex) {
                 // OK
             }
@@ -368,7 +367,7 @@ public class SolarisConnectorTest extends SolarisTestBase {
             String controlChar = "\r";
             String password = new StringBuilder().append("foo").append(controlChar).append("bar").toString();
             getFacade().create(ObjectClass.ACCOUNT, CollectionUtil.newSet(AttributeBuilder.build(Name.NAME, dummyUser), AttributeBuilder.buildPassword(password.toCharArray())), null);
-            Assert.fail("Exception should be thrown when password containing control char sent.");
+            AssertJUnit.fail("Exception should be thrown when password containing control char sent.");
         } catch (RuntimeException ex) {
             // OK
         } finally {
@@ -387,7 +386,7 @@ public class SolarisConnectorTest extends SolarisTestBase {
         String password = new StringBuilder().append("foo").append(controlChar).append("bar").toString();
         try {
             getFacade().update(ObjectClass.ACCOUNT, new Uid(getUsername()), CollectionUtil.newSet(AttributeBuilder.buildPassword(password.toCharArray())), null);
-            Assert.fail("Exception should be thrown when password containing control char sent.");
+            AssertJUnit.fail("Exception should be thrown when password containing control char sent.");
         } catch (RuntimeException ex) {
             // OK
         }
@@ -400,7 +399,7 @@ public class SolarisConnectorTest extends SolarisTestBase {
         
         try {
             getFacade().create(ObjectClass.ACCOUNT, CollectionUtil.newSet(AttributeBuilder.build(Name.NAME, dummyUser), AttributeBuilder.buildPassword("foopass".toCharArray()), AttributeBuilder.build(AccountAttribute.UID.getName(), username2)), null);
-            Assert.fail("Create of user ID with existing uid should fail - throw an exception.");
+            AssertJUnit.fail("Create of user ID with existing uid should fail - throw an exception.");
         } catch (RuntimeException ex) {
             // OK
             System.out.println(ex.toString());

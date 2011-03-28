@@ -22,14 +22,13 @@
  */
 package org.identityconnectors.solaris.operation.search.nodes;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.solaris.attr.NativeAttribute;
 import org.identityconnectors.solaris.operation.search.SolarisEntry;
-import org.junit.Test;
 
 public class ContainsAllValuesNodeTest {
     @Test
@@ -42,16 +41,16 @@ public class ContainsAllValuesNodeTest {
         newList.add("boo");
         
         boolean result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").addAttr(NativeAttribute.NAME, newList).build());
-        Assert.assertTrue(result);
+        AssertJUnit.assertTrue(result);
         result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").addAttr(NativeAttribute.NAME, CollectionUtil.newList("ahoj", "ship")).build());
-        Assert.assertFalse(result);
+        AssertJUnit.assertFalse(result);
         
         // negated result
         swn = new ContainsAllValuesNode(NativeAttribute.NAME, true, originalList);
         result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").addAttr(NativeAttribute.NAME, newList).build());
-        Assert.assertFalse(result);        
+        AssertJUnit.assertFalse(result);        
         result = swn.evaluate(new SolarisEntry.Builder("FooBarBaz").addAttr(NativeAttribute.NAME, CollectionUtil.newList("ahoj", "ship")).build());
-        Assert.assertTrue(result);
+        AssertJUnit.assertTrue(result);
         
     }
 }

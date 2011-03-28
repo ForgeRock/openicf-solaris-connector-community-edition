@@ -22,11 +22,11 @@
  */
 package org.identityconnectors.solaris.test;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import junit.framework.Assert;
 
 import org.identityconnectors.common.StringUtil;
 import org.identityconnectors.framework.common.objects.Attribute;
@@ -41,7 +41,6 @@ import org.identityconnectors.solaris.attr.AccountAttribute;
 import org.identityconnectors.solaris.attr.GroupAttribute;
 import org.identityconnectors.solaris.operation.search.SolarisSearch;
 import org.identityconnectors.test.common.ToListResultsHandler;
-import org.junit.Test;
 
 public class SolarisSearchTest extends SolarisTestBase {
     private static final int NR_OF_USERS = 3;
@@ -65,7 +64,7 @@ public class SolarisSearchTest extends SolarisTestBase {
             expectedNames.remove(connectorObject.getName().getNameValue());
         }
 
-        Assert.assertTrue(String.format("Searched failed to find the following users: %s", expectedNames), expectedNames.isEmpty());
+        AssertJUnit.assertTrue(String.format("Searched failed to find the following users: %s", expectedNames), expectedNames.isEmpty());
     }
 
     /**
@@ -82,11 +81,11 @@ public class SolarisSearchTest extends SolarisTestBase {
         
         final List<ConnectorObject> l = handler.getObjects();
         String msg = String.format("Size of results is less than expected: %s", l.size());
-        Assert.assertTrue(msg, l.size() == 1);
+        AssertJUnit.assertTrue(msg, l.size() == 1);
 
         final String returnedUsername = l.get(0).getName().getNameValue();
         msg = String.format("The returned username '%s', differs from the expected '%s'", returnedUsername, username);
-        Assert.assertTrue(msg, returnedUsername.equals(username));
+        AssertJUnit.assertTrue(msg, returnedUsername.equals(username));
     }
 
     @Test
@@ -94,12 +93,12 @@ public class SolarisSearchTest extends SolarisTestBase {
         ToListResultsHandler handler = new ToListResultsHandler();
         getFacade().search(SolarisSearch.SHELL, null, handler, null);
         List<ConnectorObject> result = handler.getObjects();
-        Assert.assertNotNull(result);
+        AssertJUnit.assertNotNull(result);
 
         if (result.size() > 0) {
             for (ConnectorObject connectorObject : result) {
                 String value = connectorObject.getName().getNameValue();
-                Assert.assertTrue(StringUtil.isNotBlank(value));
+                AssertJUnit.assertTrue(StringUtil.isNotBlank(value));
             }
         }
     }
@@ -109,12 +108,12 @@ public class SolarisSearchTest extends SolarisTestBase {
         ToListResultsHandler handler = new ToListResultsHandler();
         getFacade().search(ObjectClass.GROUP, null, handler, null);
         List<ConnectorObject> result = handler.getObjects();
-        Assert.assertNotNull(result);
+        AssertJUnit.assertNotNull(result);
 
         if (result.size() > 0) {
             for (ConnectorObject connectorObject : result) {
                 String value = connectorObject.getName().getNameValue();
-                Assert.assertTrue(StringUtil.isNotBlank(value));
+                AssertJUnit.assertTrue(StringUtil.isNotBlank(value));
             }
         }
     }
@@ -130,7 +129,7 @@ public class SolarisSearchTest extends SolarisTestBase {
                 FilterBuilder.equalTo(AttributeBuilder.build(Name.NAME, username)), handler, 
                 new OperationOptionsBuilder().setAttributesToGet(AccountAttribute.UID.getName()).build()
                 );
-        Assert.assertTrue("no results returned", handler.getObjects().size() == 1);
+        AssertJUnit.assertTrue("no results returned", handler.getObjects().size() == 1);
         ConnectorObject accountEntry = handler.getObjects().get(0);
         for (Attribute attr : accountEntry.getAttributes()) {
             if (attr.getName().equals(AccountAttribute.UID.getName())) {
@@ -142,11 +141,11 @@ public class SolarisSearchTest extends SolarisTestBase {
                 int uidPosition = (!getConnection().isNis()) ? 1 : 2;
                 int realUid = Integer.valueOf(out.split(":")[uidPosition]);
                 
-                Assert.assertEquals(realUid, uidValue);
+                AssertJUnit.assertEquals(realUid, uidValue);
                 return;
             }
         }
-        Assert.fail("no uid attribute found");
+        AssertJUnit.fail("no uid attribute found");
     }
     
     /**
@@ -160,7 +159,7 @@ public class SolarisSearchTest extends SolarisTestBase {
                 FilterBuilder.equalTo(AttributeBuilder.build(Name.NAME, groupName)), handler, 
                 new OperationOptionsBuilder().setAttributesToGet(GroupAttribute.GID.getName()).build()
                 );
-        Assert.assertTrue("no results returned", handler.getObjects().size() == 1);
+        AssertJUnit.assertTrue("no results returned", handler.getObjects().size() == 1);
         ConnectorObject accountEntry = handler.getObjects().get(0);
         for (Attribute attr : accountEntry.getAttributes()) {
             if (attr.getName().equals(GroupAttribute.GID.getName())) {
@@ -171,11 +170,11 @@ public class SolarisSearchTest extends SolarisTestBase {
                 String out = getConnection().executeCommand(cmd);
                 int expected = Integer.valueOf(out.split(":")[1]);
                 
-                Assert.assertEquals(expected, gidValue);
+                AssertJUnit.assertEquals(expected, gidValue);
                 return;
             }
         }
-        Assert.fail("no uid attribute found");
+        AssertJUnit.fail("no uid attribute found");
     }
 
     @Override

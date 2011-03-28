@@ -23,19 +23,18 @@
 
 package org.identityconnectors.solaris.operation.search;
 
-import junit.framework.Assert;
-
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.solaris.attr.NativeAttribute;
 import org.identityconnectors.solaris.test.SolarisTestBase;
-import org.junit.Test;
 
 public class LastCommandTest extends SolarisTestBase {
     @Test
     public void test() {
         Attribute result = LastCommand.getLastAttributeFor("root", getConnection());
-        Assert.assertNotNull(result);
-        Assert.assertEquals(NativeAttribute.LAST_LOGIN.getName(), result.getName());
+        AssertJUnit.assertNotNull(result);
+        AssertJUnit.assertEquals(NativeAttribute.LAST_LOGIN.getName(), result.getName());
     }
     
     @Override

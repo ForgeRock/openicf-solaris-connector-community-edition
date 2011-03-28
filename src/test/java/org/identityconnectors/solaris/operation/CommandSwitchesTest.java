@@ -22,19 +22,18 @@
  */
 package org.identityconnectors.solaris.operation;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import junit.framework.Assert;
-
 import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.solaris.attr.NativeAttribute;
 import org.identityconnectors.solaris.operation.search.SolarisEntry;
 import org.identityconnectors.solaris.test.SolarisTestBase;
-import org.junit.Test;
 
 public class CommandSwitchesTest extends SolarisTestBase {
     private static final String COMMAND_LINE_SWITCH_MARKER = "-";
@@ -77,7 +76,7 @@ public class CommandSwitchesTest extends SolarisTestBase {
             String msg = String.format("Invalid command line formatter: output: <%s> doesn't match regexp: <%s>", generatedCommandLineSwitches, regexp);
             Pattern p = Pattern.compile(regexp);            
             Matcher m = p.matcher(generatedCommandLineSwitches);
-            Assert.assertTrue(msg, m.find());
+            AssertJUnit.assertTrue(msg, m.find());
         }
     }
     
@@ -104,8 +103,8 @@ public class CommandSwitchesTest extends SolarisTestBase {
         String[] switchElements = generatedCommandLineSwitches.split(COMMAND_LINE_SWITCH_MARKER);
         for (NativeAttribute attr : multivalueAttributes) {
             String foundCluster = searchCluster(attr, switchElements);
-            Assert.assertNotNull("attribute '" + attr.getName() + "' is missing", foundCluster);
-            Assert.assertTrue(foundCluster.contains(expectedMultivalueArgument));
+            AssertJUnit.assertNotNull("attribute '" + attr.getName() + "' is missing", foundCluster);
+            AssertJUnit.assertTrue(foundCluster.contains(expectedMultivalueArgument));
         }
     }
 

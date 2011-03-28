@@ -22,11 +22,11 @@
  */
 package org.identityconnectors.solaris.test;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.identityconnectors.common.security.GuardedString;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.objects.ObjectClass;
-import org.junit.Assert;
-import org.junit.Test;
 
 public class SolarisAuthenticateTest extends SolarisTestBase {
     
@@ -39,7 +39,7 @@ public class SolarisAuthenticateTest extends SolarisTestBase {
         try {
             getFacade().authenticate(ObjectClass.ACCOUNT, username, passwd, null);
         } catch (Exception ex) {
-            Assert.fail("Unexpected exception thrown during authenticate. Exception message:" + ex.getMessage());
+            AssertJUnit.fail("Unexpected exception thrown during authenticate. Exception message:" + ex.getMessage());
         }
     }
    
@@ -53,7 +53,7 @@ public class SolarisAuthenticateTest extends SolarisTestBase {
     /**
      * test to authenticate with invalid credentials.
      */
-    @Test (expected=ConnectorException.class)
+    @Test (expectedExceptions=ConnectorException.class)
     public void testAuthenticateApiOpInvalidCredentials() {
         GuardedString password = new GuardedString(
                 "WRONG_PASSWORD_FOOBAR2135465".toCharArray());
@@ -61,14 +61,14 @@ public class SolarisAuthenticateTest extends SolarisTestBase {
         getFacade().authenticate(ObjectClass.ACCOUNT, username, password, null);
     }
     
-    @Test (expected=IllegalArgumentException.class)
+    @Test (expectedExceptions=IllegalArgumentException.class)
     public void unknownObjectClass() {
         GuardedString password = getConfiguration().getPassword();
         String username = getConfiguration().getLoginUser();
         getFacade().authenticate(new ObjectClass("NONEXISTING_OBJECTCLASS"), username, password, null);
     }
     
-    @Test (expected=RuntimeException.class)
+    @Test (expectedExceptions=RuntimeException.class)
     public void unknownUid() {
         GuardedString password = getConfiguration().getPassword();
         getFacade().authenticate(ObjectClass.ACCOUNT, "NONEXISTING_UID___", password, null);

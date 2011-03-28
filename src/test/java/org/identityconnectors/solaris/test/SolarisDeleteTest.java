@@ -22,29 +22,29 @@
  */
 package org.identityconnectors.solaris.test;
 
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.Uid;
-import org.junit.Assert;
-import org.junit.Test;
 
 public class SolarisDeleteTest extends SolarisTestBase {
     @Test
     public void testDeleteUnknownUid() {
         try {
             getFacade().delete(ObjectClass.ACCOUNT, new Uid("nonExistingUid"), null);
-            Assert.fail("no exception was thrown when attempt to create a nonexisting account");
+            AssertJUnit.fail("no exception was thrown when attempt to create a nonexisting account");
         } catch (ConnectorException ex) {
             // OK
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void unknownObjectClass() {
         getFacade().delete(new ObjectClass("nonExistingObjectclass"), new Uid(getUserName()), null);
     }
 
-    @Test(expected = ConnectorException.class)
+    @Test(expectedExceptions = ConnectorException.class)
     public void testDeleteUnknownGroup() {
         getFacade().delete(ObjectClass.GROUP, new Uid("nonExistingGroup"), null);
     }
@@ -55,7 +55,7 @@ public class SolarisDeleteTest extends SolarisTestBase {
         //search for the account
         String command = (!getConnection().isNis()) ? "cut -d: -f1 /etc/passwd | grep '" + getUserName() + "'" : "ypcat passwd | cut -d: -f1 | grep '" + getUserName() + "'";
         String out = getConnection().executeCommand(command);
-        Assert.assertTrue(!out.contains(getUserName()));
+        AssertJUnit.assertTrue(!out.contains(getUserName()));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class SolarisDeleteTest extends SolarisTestBase {
         String command = (!getConnection().isNis()) ? "cat /etc/group | grep '" + groupName + "'" : "ypcat group | cut -d: -f1 | grep '" + groupName + "'";
         String out = getConnection().executeCommand(command);
         String msg = String.format((isDeleted) ? "group '%s' was not properly deleted from the resource, it is still there" : "group '%s' is missing from the resource, create failed." , groupName);
-        Assert.assertTrue(msg, (isDeleted) ? !out.contains(groupName) : out.contains(groupName));
+        AssertJUnit.assertTrue(msg, (isDeleted) ? !out.contains(groupName) : out.contains(groupName));
     }
 
     @Override
